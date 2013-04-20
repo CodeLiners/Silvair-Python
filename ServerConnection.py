@@ -1,6 +1,7 @@
 from Hooks import callHook
 from Utils import Struct, sendLineToSocket
 from threading import Thread
+from Logging import *
 
 class ServerCon:
     """docstring for ServerCon"""
@@ -47,10 +48,14 @@ class ServerCon:
                 self.user.broadcastToClients(args = data.args, data = data.data, prefix = data.prefix)
 
     def _login(self):
+        log(Level.DEBUG, "Logging in...")
+        log("Test")
         if not self.serv['pass'] is None:
+            log("Test")
             self.send(args = ["PASS", self.serv['pass']])
         self.send(args = ["NICK", self.user.nick], data = None)
         self.send(args = ["USER", self.user.data['ident'], "0", self.serv['host']], data = self.user.data['realname'])
+        log(Level.DEBUG, "Done")
 
     def _callHook(self, name, data):
         for hook in self._hooks:
@@ -61,6 +66,7 @@ class ServerCon:
         self._hooks.append(handler)
 
     def sendLine(self, line):
+        log("Test")
         data = Struct()
         data.con = self
         data.passthough = True
@@ -70,6 +76,7 @@ class ServerCon:
             sendLineToSocket(self.con, line + "\r\n")
 
     def send(self, args = [], data = None):
+        log(Level.DEBUG, "Test")
         argline = " ".join(args)
         if data is None:
             data = ""

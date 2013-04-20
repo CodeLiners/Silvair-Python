@@ -17,6 +17,6 @@ s = hashlib.sha512()
 s.update("test")
 passw = s.hexdigest()
 
-serv = {"host": "localhost", "port": 6667, "pass": "Kilo2:test"} # local bnc, don't even try connecting, port is behind a firewall
+serv = {"host": "localhost", "port": 6667, "pass": None}
 user = {"name": "Kilobyte", "pass": passw, "server": serv, "nick": "Kilo2", "realname": "Test", "ident": "test"}
 User(user)

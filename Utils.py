@@ -4,6 +4,8 @@ class Struct:
 def sendLineToSocket(sock, line):
     totalsent = 0
     MSGLEN = len(line)
+    if MSGLEN == 0:
+        return
     while totalsent < MSGLEN:
         sent = sock.send(line[totalsent:])
         if sent == 0:
