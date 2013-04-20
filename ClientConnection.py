@@ -1,10 +1,12 @@
 from Hooks import callHook
-from Utils import Struct
+from Utils import Struct, sendLineToSocket
 from threading import Thread
+from Logging import log
 
 class ClientCon:
     """docstring for ClientCon"""
     def __init__(self, con, addr):
+    	log(1, "New Client: " + addr)
         self.con = con
         self.file = con.makefile()
         self.addr = addr
@@ -56,7 +58,7 @@ class ClientCon:
         data.line = line
         self._callHook("out_raw", data)
         if data.passthough:
-            self.file.write(line + "\r\n")
+            sendLineToSocket(self.con, line + "\r\n")
 
     def send(self, args = [], data = None, prefix = None):
         if prefix is None:

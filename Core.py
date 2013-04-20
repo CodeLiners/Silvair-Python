@@ -1,21 +1,22 @@
 from Hooks import regHook
+from Logging import log
 import User
 import hashlib
 
 def universalRaw(arg):
     line = arg.line
     if line.upper()[:6] == "PING :":
-        arg.con.sendLine("PONG :" + line[7:])
-        arg.passthough = false # don't send to server/client
+        arg.con.sendLine("PONG :" + line[6:])
+        arg.passthough = False # don't send to server/client
 
 def clientUSER(arg):
     if arg.con.pw is None:
         arg.con.sendLine(":Silvair!bnc@codeliners.org 464 :You need to send a password (user:pass) before sending the USER command")
         arg.con.close()
-        arg.passthough = false
+        arg.passthough = False
     else:
         if arg.con.user is None:
-            arg.passthough = false
+            arg.passthough = False
             p = arg.con.pw.split(":")
             if len(p) != 2:
                 arg.con.sendLine(":Silvair!bnc@codeliners.org 464 :Invalid server password format")
@@ -40,18 +41,18 @@ def clientPASS(arg):
     arg.con.pw = arg.args[1]
 
 def clientInRaw(arg):
-    print("[CLIENT] -> [BNC] " + arg.line)
+    log(1, "[CLIENT] -> [BNC] " + arg.line)
 
 def clientOutRaw(arg):
-    print("[CLIENT] <- [BNC] " + arg.line)
+    log(1, "[CLIENT] <- [BNC] " + arg.line)
 
 ### SERVER ###
 
 def serverInRaw(arg):
-    print("[BNC] <- [IRCD] " + arg.line)
+    log(1, "[BNC] <- [IRCD] " + arg.line)
 
 def serverOutRaw(arg):
-    print("[BNC] -> [IRCD] " + arg.line)
+    log(1, "[BNC] -> [IRCD] " + arg.line)
 
 def serverNICK(arg):
     arg.con.user.nick = arg.args[2]

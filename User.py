@@ -7,6 +7,7 @@ class User:
         self.data = data
         self.nick = data['nick']
         self.clients = []
+        self.channels = []
         self.connectToServer()
 
     def sendLineToServer(self, line):
@@ -30,3 +31,10 @@ class User:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM) 
         sock.connect((self.data['server']['host'], self.data['server']['port']))
         self.servcon = ServerCon(sock, self.data['server'], self)
+
+    def getMask(self):
+        return self.nick + "!" + self.ident + "@" + self.hostmask
+
+    def introduceClient(self, client):
+        for c in self.channels:
+            client.send(args = [self.getMask(), "JOIN", ])

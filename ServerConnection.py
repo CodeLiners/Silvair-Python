@@ -1,5 +1,5 @@
 from Hooks import callHook
-from Utils import Struct
+from Utils import Struct, sendLineToSocket
 from threading import Thread
 
 class ServerCon:
@@ -10,13 +10,16 @@ class ServerCon:
         self.user = user
         self.serv = serv
         self._hooks = []
+        self._loggedin = False
         Thread(target = self._listen).start()
-        self._login()
 
     def _listen(self):
         callHook("newServer", self)
         while True:
-            line = self.file.readline()
+            line = self.file.readline().replace("\n", "").replace("\r", "")
+            if not self._loggedin:
+                self._login()
+                self._loggedin = True
             if line == "":
                 self._callHook("disconnect", None)
                 return
@@ -41,7 +44,7 @@ class ServerCon:
             data.passthough = True
             self._callHook("in_DATA_" + data.args[1].upper(), data)
             if data.passthough:
-                self.user.broadcastToClients(**data)
+                self.user.broadcastToClients(args = data.args, data = data.data, prefix = data.prefix)
 
     def _login(self):
         if not self.serv['pass'] is None:
@@ -64,7 +67,7 @@ class ServerCon:
         data.line = line
         self._callHook("out_raw", data)
         if data.passthough:
-            self.file.write(line + "\r\n")
+            sendLineToSocket(self.con, line + "\r\n")
 
     def send(self, args = [], data = None):
         argline = " ".join(args)
